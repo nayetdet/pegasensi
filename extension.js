@@ -134,18 +134,20 @@ class Indicator extends PanelMenu.Button {
             this.settings.connect('changed::speed', () => this._updateActivePreset()),
         ]);
 
-        for (const {key} of Object.values(PRESETS)) {
+        for (const { key } of Object.values(PRESETS)) {
             this._signalIds.push([
                 this.ext,
                 this.ext.connect(`changed::${key}`, () => {
+                    const wasActive = this._activePreset === key;
                     const sliderSpeed = this._toSliderSpeedFromMouse(this.ext.get_double(key));
                     if (this._presets[key].slider.value !== sliderSpeed) {
                         this._presets[key].slider.value = sliderSpeed;
                     }
 
-                    this._updateActivePreset();
-                    if (this._activePreset === key) {
+                    if (wasActive) {
                         this.settings.set_double('speed', this.ext.get_double(key));
+                    } else {
+                        this._updateActivePreset();
                     }
                 }),
             ]);
