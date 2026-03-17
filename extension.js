@@ -20,13 +20,12 @@ import GObject from 'gi://GObject';
 import Gio from 'gi://Gio';
 import St from 'gi://St';
 
-import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as Slider from 'resource:///org/gnome/shell/ui/slider.js';
-import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
-const PRESET_ACTIVE_CLASS = 'pegasensi-preset-label-active';
 const PRESETS = {
     a: {
         key: 'preset-a',
@@ -51,7 +50,6 @@ class Indicator extends PanelMenu.Button {
 
         this._addIcon();
         this._addPresetSliders();
-        this._addPresetToggle();
 
         this._signalIds = [];
 
@@ -69,41 +67,41 @@ class Indicator extends PanelMenu.Button {
 
     _addPresetSliders() {
         for (const { key, label } of Object.values(PRESETS)) {
-            const sliderItem = new PopupMenu.PopupBaseMenuItem({ activate: false });
-            const sliderBox = new St.BoxLayout({ vertical: true, x_expand: true });
-            const sliderBoxLabel = new St.Label({ text: label });
-            sliderBox.add_child(sliderBoxLabel);
+            const preset = this._presets[key] = {
+                checkbox: new St.Icon({ icon_name: 'checkbox-symbolic' }),
+                slider: new Slider.Slider(this._toSliderSpeedFromMouse(this.ext.get_double(key))),
+            };
 
-            const slider = new Slider.Slider(this._toSliderSpeedFromMouse(this.ext.get_double(key)));
-            slider.connect('notify::value', () => {
-                const speed = this._toMouseSpeedFromSlider(slider.value);
+            const item = new PopupMenu.PopupBaseMenuItem({ activate: false });
+            const box = new St.BoxLayout({
+                vertical: true,
+                x_expand: true,
+            });
+
+            const buttonContent = new St.BoxLayout({ x_expand: true });
+            buttonContent.add_child(preset.checkbox);
+            buttonContent.add_child(new St.Label({ text: label }));
+
+            const button = new St.Button({
+                child: buttonContent,
+                can_focus: true,
+                reactive: true,
+                track_hover: true,
+            });
+
+            button.connect('clicked', () => this.settings.set_double('speed', this.ext.get_double(key)));
+            preset.slider.connect('notify::value', () => {
+                const speed = this._toMouseSpeedFromSlider(preset.slider.value);
                 if (this.ext.get_double(key) !== speed) {
                     this.ext.set_double(key, speed);
                 }
             });
 
-            sliderBox.add_child(slider);
-            sliderItem.add_child(sliderBox);
-            this.menu.addMenuItem(sliderItem);
-            this._presets[key] = {
-                label: sliderBoxLabel,
-                slider: slider,
-            };
+            box.add_child(button);
+            box.add_child(preset.slider);
+            item.add_child(box);
+            this.menu.addMenuItem(item);
         }
-    }
-
-    _addPresetToggle() {
-        const toggleItem = new PopupMenu.PopupMenuItem('Toggle');
-        toggleItem.connect('activate', () => {
-            this._updateActivePreset();
-            const speed = this._activePreset === PRESETS.a.key
-                ? PRESETS.b.key
-                : PRESETS.a.key;
-
-            this.settings.set_double('speed', this.ext.get_double(speed));
-        });
-
-        this.menu.addMenuItem(toggleItem);
     }
 
     _updateActivePreset() {
@@ -115,16 +113,14 @@ class Indicator extends PanelMenu.Button {
             ? PRESETS.a.key
             : PRESETS.b.key;
 
-        for (const {key} of Object.values(PRESETS)) {
+        for (const { key } of Object.values(PRESETS)) {
             if (!this._presets[key]) {
                 continue;
             }
 
-            if (key === this._activePreset) {
-                this._presets[key].label.add_style_class_name(PRESET_ACTIVE_CLASS);
-            } else {
-                this._presets[key].label.remove_style_class_name(PRESET_ACTIVE_CLASS);
-            }
+            this._presets[key].checkbox.icon_name = key === this._activePreset
+                ? 'checkbox-checked-symbolic'
+                : 'checkbox-symbolic';
         }
     }
 

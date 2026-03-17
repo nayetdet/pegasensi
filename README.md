@@ -8,7 +8,7 @@ Compatível com GNOME Shell 49.
 
 - Dois presets configuráveis de velocidade do mouse
 - Slider para ajustar cada preset direto no menu da barra superior
-- Botão de toggle para alternar entre os dois valores salvos
+- Clique no nome do preset para aplicar aquele valor imediatamente
 - Destaque visual do preset atualmente mais próximo da velocidade ativa
 
 ## Instalação
@@ -30,7 +30,7 @@ gnome-extensions enable pegasensi@nayetdet
 
 - Clique no ícone de mouse na barra superior
 - Ajuste os sliders dos presets
-- Use `Toggle` para alternar entre `Preset A` e `Preset B`
+- Clique em `Preset A` ou `Preset B` para aplicar o preset
 
 ## Desenvolvimento
 
