@@ -1,0 +1,10 @@
+<schemalist>
+  <schema id="org.gnome.shell.extensions.pegasensi" path="/org/gnome/shell/extensions/pegasensi/">
+    <key name="preset-a" type="d">
+      <default>0.0</default>
+    </key>
+    <key name="preset-b" type="d">
+      <default>-0.5</default>
+    </key>
+  </schema>
+</schemalist>

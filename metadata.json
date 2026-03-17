@@ -1,0 +1,9 @@
+{
+  "name": "pegasensi",
+  "description": "Extensão do GNOME Shell para controlar a sensibilidade do mouse de forma prática e imediata.",
+  "uuid": "pegasensi@nayetdet",
+  "settings-schema": "org.gnome.shell.extensions.pegasensi",
+  "shell-version": [
+    "49"
+  ]
+}

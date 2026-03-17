@@ -1,0 +1,9 @@
+schemas/gschemas.compiled
+
+*.zip
+*.log
+*~
+*.swp
+*.swo
+
+.DS_Store
