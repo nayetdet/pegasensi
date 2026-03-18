@@ -78,7 +78,11 @@ class Indicator extends PanelMenu.Button {
                 x_expand: true,
             });
 
-            const buttonContent = new St.BoxLayout({ x_expand: true });
+            const buttonContent = new St.BoxLayout({
+                x_expand: true,
+                style: 'spacing: 8px;',
+            });
+
             buttonContent.add_child(preset.checkbox);
             buttonContent.add_child(new St.Label({ text: label }));
 
