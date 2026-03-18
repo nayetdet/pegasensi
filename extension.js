@@ -68,7 +68,7 @@ class Indicator extends PanelMenu.Button {
     _addPresetSliders() {
         for (const { key, label } of Object.values(PRESETS)) {
             const preset = this._presets[key] = {
-                checkbox: new St.Icon({ icon_name: 'checkbox-symbolic' }),
+                checkbox: new St.Icon({ icon_name: 'checkbox-symbolic', icon_size: 16 }),
                 slider: new Slider.Slider(this._toSliderSpeedFromMouse(this.ext.get_double(key))),
             };
 
